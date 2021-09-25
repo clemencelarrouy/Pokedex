@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <form>
+      <h1>Pokédex !</h1>
+      <input type="text" placeholder="Poké recherche" />
+
+      <ul></ul>
+    </form>
+
+    <script>
+      const pokedex =
+        "https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json";
+
+      const pokemons = [];
+      fetch(pokedex)
+        .then((blob) => blob.json())
+        .then((data) => pokemons.push(...data.pokemon));
+
+      function trouverPokemon(recherche, pokemons) {
+        return pokemons.filter((pokemon) => {
+          const regex = new RegExp(recherche, "gi");
+          return (
+            pokemon.name.match(regex) ||
+            pokemon.type.find((type) => type.match(regex))
+          );
+        });
+      }
+
+      function afficherResultat() {
+        const tableauResultat = trouverPokemon(this.value, pokemons);
+        const html = tableauResultat
+          .map((pokemon) => {
+            return `
+                <li>
+                    <img src=" ${pokemon.img}" width="50px" height="50px"/>
+                    <span> ${pokemon.name}</span>
+                    <span> ${pokemon.height}</span>
+                    <span> ${pokemon.weight}</span>
+                     </li>
+                `;
+          })
+          .join("");
+        resultat.innerHTML = html;
+      }
+
+      const input = document.querySelector("input");
+      const resultat = document.querySelector("ul");
+
+      input.addEventListener("change", afficherResultat);
+      input.addEventListener("keyup", afficherResultat);
+    </script>
+  </body>
+</html>
